@@ -1,0 +1,29 @@
+import { Button } from "std-widgets.slint";
+
+export component AppWindow inherits Window {
+    in-out property <string> message: "Hello World";
+    in-out property <image> image;
+
+    callback dither();
+
+    width: 400px;
+    height: 300px;
+    title: "Hello world";
+
+    VerticalLayout {
+        Text {
+            text: message;
+        }
+
+        Image {
+            source: image;
+        }
+
+        Button {
+            text: "Hello World";
+            clicked => {
+                root.dither();
+            }
+        }
+    }
+}
