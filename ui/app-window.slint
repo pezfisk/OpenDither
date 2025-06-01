@@ -1,28 +1,50 @@
-import { Button } from "std-widgets.slint";
+import { Button, Slider } from "std-widgets.slint";
 
 export component AppWindow inherits Window {
     in-out property <string> message: "Hello World";
     in-out property <image> image;
+    in-out property <image> image2;
 
-    callback dither();
+    callback dither(int);
 
-    width: 400px;
-    height: 300px;
+    min-width: 1000px;
+    min-height: 1000px;
     title: "Hello world";
 
-    VerticalLayout {
-        Text {
-            text: message;
+    HorizontalLayout {
+        VerticalLayout {
+            Text {
+                text: message;
+            }
+
+            Slider {
+                minimum: 1;
+                maximum: 7;
+                value: 3;
+                step: 1;
+                released(value) => {
+                    root.dither(value);
+                }
+            }
+
+            //Button {
+            //    text: "Hello World";
+            //    clicked => {
+            //        root.dither();
+            //    }
+            //}
         }
 
-        Image {
-            source: image;
-        }
+        VerticalLayout {
+            width: 50%;
+            HorizontalLayout {
+                Image {
+                    source: image;
+                }
 
-        Button {
-            text: "Hello World";
-            clicked => {
-                root.dither();
+                Image {
+                    source: image2;
+                }
             }
         }
     }
