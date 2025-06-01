@@ -1,49 +1,171 @@
-import { Button, Slider } from "std-widgets.slint";
+import { Button, Slider, Palette, VerticalBox } from "std-widgets.slint";
 
 export component AppWindow inherits Window {
     in-out property <string> message: "Hello World";
     in-out property <image> image;
-    in-out property <image> image2;
+    in-out property <string> imagePath: "";
+    in-out property <int> ditherValue: 3;
+    in-out property <int> brightnessValue: 50;
+    in-out property <int> contrastValue: 50;
 
-    callback dither(int);
+    callback open();
+    callback dither(int, int, int);
+    callback export(int, int, int);
 
-    min-width: 1000px;
-    min-height: 1000px;
-    title: "Hello world";
+    min-height: 600px;
+    background: Palette.background;
+    title: "DitherRS";
+
+    MenuBar {
+        Menu {
+            title: @tr("File");
+            MenuItem {
+                title: @tr("Open");
+                activated => {
+                    root.open();
+                }
+            }
+
+            MenuItem {
+                title: @tr("Save as...");
+                activated => {
+                    root.export(root.ditherValue, root.brightnessValue, root.contrastValue);
+                }
+            }
+        }
+    }
 
     HorizontalLayout {
-        VerticalLayout {
-            Text {
-                text: message;
-            }
+        padding: 8px;
+        spacing: 8px;
 
-            Slider {
-                minimum: 1;
-                maximum: 7;
-                value: 3;
-                step: 1;
-                released(value) => {
-                    root.dither(value);
+        Rectangle {
+            background: Palette.alternate-background;
+            border-color: Palette.border;
+            border-width: 1px;
+
+            Rectangle {
+                width: 100%;
+                height: 100%;
+
+                background: Palette.alternate-background;
+
+                HorizontalLayout {
+                    Image {
+                        height: 100%;
+                        source: root.image;
+                    }
                 }
             }
-
-            //Button {
-            //    text: "Hello World";
-            //    clicked => {
-            //        root.dither();
-            //    }
-            //}
         }
 
-        VerticalLayout {
-            width: 50%;
-            HorizontalLayout {
-                Image {
-                    source: image;
+        Rectangle {
+            width: 200px;
+            background: Palette.alternate-background;
+            border-color: Palette.border;
+            border-width: 1px;
+
+            VerticalBox {
+                padding: 16px;
+                spacing: 20px;
+
+                VerticalBox {
+                    spacing: 8px;
+
+                    Text {
+                        text: "Brightness";
+                        color: Palette.control-foreground;
+                        font-size: 14px;
+                    }
+
+                    Slider {
+                        minimum: -180;
+                        maximum: 180;
+                        value: root.brightnessValue;
+                        released(value) => {
+                            root.brightnessValue = value;
+                            root.dither(root.ditherValue, root.brightnessValue, root.contrastValue);
+                        }
+                    }
+
+                    Text {
+                        text: root.brightnessValue;
+                        color: Palette.control-foreground;
+                        horizontal-alignment: center;
+                    }
                 }
 
-                Image {
-                    source: image2;
+                VerticalBox {
+                    spacing: 8px;
+
+                    Text {
+                        text: "Contrast";
+                        color: Palette.control-foreground;
+                        font-size: 14px;
+                    }
+
+                    Slider {
+                        minimum: -100;
+                        maximum: 100;
+                        value: root.contrastValue;
+                        released(value) => {
+                            root.contrastValue = value;
+                            root.dither(root.ditherValue, root.brightnessValue, root.contrastValue);
+                        }
+                    }
+
+                    Text {
+                        text: root.contrastValue;
+                        color: Palette.control-foreground;
+                        horizontal-alignment: center;
+                    }
+                }
+
+                VerticalBox {
+                    spacing: 8px;
+
+                    Text {
+                        text: "Dither";
+                        color: Palette.control-foreground;
+                        font-size: 14px;
+                    }
+
+                    Slider {
+                        minimum: 1;
+                        maximum: 7;
+                        value: root.ditherValue;
+                        released(value) => {
+                            root.ditherValue = value;
+                            root.dither(root.ditherValue, root.brightnessValue, root.contrastValue);
+                        }
+                    }
+
+                    Text {
+                        text: root.ditherValue;
+                        color: Palette.control-foreground;
+                        horizontal-alignment: center;
+                    }
+                }
+
+                Rectangle {
+                    height: 1px;
+                    background: Palette.border;
+                }
+
+                VerticalBox {
+                    spacing: 12px;
+                    Text {
+                        text: "Output";
+                        color: Palette.control-foreground;
+                        font-size: 14px;
+                    }
+
+                    Button {
+                        text: "Export";
+                        clicked => {
+                            root.export(root.ditherValue, root.brightnessValue, root.contrastValue);
+                        }
+                    }
                 }
             }
         }
